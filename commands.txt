@@ -1,0 +1,2 @@
+# Если что-то не работает
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser

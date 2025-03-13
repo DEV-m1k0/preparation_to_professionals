@@ -1,0 +1,101 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'node_modules\bootstrap\dist\css\bootstrap.css' %}">
+    <title>Сессия 4</title>
+</head>
+<body>
+    <header style="background-color: rgb(158, 230, 130);" class="px-3 py-4">
+        <div class="container">
+            <form style="display: flex;" action="" method="post">
+                {% csrf_token %}
+                {{form.search}}
+                <button class="ms-2 btn btn-primary" type="submit">Найти</button>
+            </form>
+        </div>
+    </header>
+
+    <body>
+        <div class="container">
+            <div class="employees border border-2 rounded p-3 mt-2">
+                <h2>Сотрудники</h2>
+                <div class="overflow-x-scroll text-white p-1" style="display: flex;">
+                    {% if not employees %}
+                    <div class="text-center">
+                        <h3 class="text-dark-emphasis">Ничего не найдено</h3>
+                    </div>
+                    {% else %}
+                        {% for employee in employees %}
+                        <div class="bg-success col m-1 p-2" style="min-width: 275px; max-width: 275px;">
+                            <p><b>{{employee.username}}</b></p>
+                            {{employee.email}} <br>
+                            {{employee.work_phone}} <br>
+                            {{employee.position_id}} <br> <br>
+                            {{employee.birthday}}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="calendar border border-2 rounded p-3 mt-2">
+                        <h2>Календарь событий</h2>
+                        <input type="date" name="" id="">
+                    </div>
+        
+                    <div class="events border border-2 rounded p-3 mt-2">
+                        <h2>События</h2>
+                        {% if events %}
+                            <div class="text-white">
+                                {% for event in events %}
+                                    <div class="bg-success m-1 p-3">
+                                        <p><b>{{event.title}}</b></p>
+                                        <small>{{event.description}}</small> <br><br>
+                                        <div class="w-100 justify-content-md-between d-md-flex">
+                                            <small>{{event.date}}</small> <br>
+                                            <small>{{event.author}}</small>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <h3 class="text-dark-emphasis">Ничего не найдено</h3>
+                        {% endif %}
+                    </div>
+                </div>
+    
+                <div class="col-6 border border-2 rounded p-3 mt-2">
+                    <div class="row">
+                        <h2>Новости</h2>
+                        {% if news %}
+                            {% for new in news %}
+                                <div class="col-md-5 text-white my-2">
+                                    <div class="">
+                                        <img class="img-fluid" src="http://127.0.0.1:4444/{{new.image}}" alt="" width="250px" height="150px"> <br>
+                                    </div>
+                                    <div class="bg-success p-3">
+                                        <p><b>{{new.title}}</b></p>
+                                        <small>{{new.description}}</small> <br><br>
+                                        <small>{{new.date}}</small>
+                                        <br>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <h3 class="text-dark-emphasis">Ничего не найдено</h3>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </body>
+
+</body>
+</html>
