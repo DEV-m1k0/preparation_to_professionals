@@ -68,8 +68,13 @@ class MainWindow(QMainWindow):
         self.ui.listWidget.clear()
         users = get_employees_by_department(text)
         for user in users:
-
-            self.ui.listWidget.addItem(user['username'])
+            item =  QListWidgetItem(f"{user['birthday']}\n{user['username']}\n{user['email']}")
+            if user['date_of_dismissal']:
+                item.setBackground(QColor('red'))
+                self.ui.listWidget.addItem(item)
+            else:
+                item.setBackground(QColor('#e0f4c8'))
+                self.ui.listWidget.addItem(item)
 
 
 

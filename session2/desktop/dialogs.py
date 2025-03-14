@@ -13,12 +13,115 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QDateEdit, QDialog,
 from api import *
 import bcrypt
 from datetime import date, datetime, timezone
-import add_employee_dialog, edit_employee
+import add_employee_dialog, edit_employee, re, add_skip, add_event, logging
 
 
 """
 Диалоговые окна для настольного приложения
 """
+
+class AddNewEvent(QDialog):
+    def __init__(self, prev_obj, employee_name: str):
+        super().__init__()
+
+        self.ui = add_event.Ui_Dialog()
+        self.ui.setupUi(self)
+
+        self.employee_name = employee_name
+        self.prev_obj = prev_obj
+
+        self.ui.pushButton_add.clicked.connect(self.save)
+
+    def save(self):
+        title = self.ui.lineEdit_title.text()
+        date_start = self.ui.dateTimeEdit_since.text()
+        date_end = self.ui.dateTimeEdit_until.text()
+
+        if add_event_by_employee(title, self.employee_name, date_start, date_end):
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Сохранение отпуска")
+            msg_box.setText("Отпуск сохранен")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg_box.exec()
+            self.close()
+
+            self.prev_obj.setup()
+        else:
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Ошибка сохранения")
+            msg_box.setText("Произошла ошибка при сохранении пропуска")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg_box.exec()
+
+
+
+class AddNewVacation(QDialog):
+    def __init__(self, prev_obj, employee_name: str):
+        super().__init__()
+
+        self.ui = add_skip.Ui_Dialog()
+        self.ui.setupUi(self)
+
+        self.employee_name = employee_name
+        self.prev_obj = prev_obj
+
+        self.ui.pushButton_add.clicked.connect(self.save)
+
+
+    def save(self):
+        date_start = self.ui.dateEdit_since.text()
+        date_end = self.ui.dateEdit_before.text()
+
+        if add_vacation_by_employee(self.employee_name, date_start, date_end):
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Сохранение отпуска")
+            msg_box.setText("Отпуск сохранен")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg_box.exec()
+            self.close()
+
+            self.prev_obj.setup()
+        else:
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Ошибка сохранения")
+            msg_box.setText("Произошла ошибка при сохранении пропуска")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg_box.exec()  
+
+class AddNewSkip(QDialog):
+    def __init__(self, prev_obj, employee_name: str):
+        super().__init__()
+
+        self.ui = add_skip.Ui_Dialog()
+        self.ui.setupUi(self)
+
+        self.employee_name = employee_name
+        self.prev_obj = prev_obj
+
+        self.ui.pushButton_add.clicked.connect(self.save)
+
+
+    def save(self):
+        date_start = self.ui.dateEdit_since.text()
+        date_end = self.ui.dateEdit_before.text()
+
+        if add_skip_by_employee(self.employee_name, date_start, date_end):
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Сохранение пропуска")
+            msg_box.setText("Пропуск сохранен")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg_box.exec()
+            self.close()
+
+            self.prev_obj.setup()
+        else:
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Ошибка сохранения")
+            msg_box.setText("Произошла ошибка при сохранении пропуска")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg_box.exec()        
+
+
 
 
 class EditEmployeeDialog(QDialog):
@@ -38,10 +141,6 @@ class EditEmployeeDialog(QDialog):
         self.sub_sub_divisions = sub_sub_divisions
         self.selected_department = selected_department
 
-        self.study_dates = get_study_date_by_employee_name(self.name)
-        self.vacation_dates = get_vacations_by_employee_name(self.name)
-        self.skip_dates = get_skip_dates_by_employee_name(self.name)
-
         self.ui = edit_employee.Ui_Dialog()
         self.ui.setupUi(self)
 
@@ -53,6 +152,85 @@ class EditEmployeeDialog(QDialog):
         self.ui.combobox_filtration_by_period_for_study.currentTextChanged.connect(self.filtration_for_study)
         self.ui.combobox_filtration_by_period_for_skips.currentTextChanged.connect(self.filtration_for_skips)
         self.ui.combobox_filtration_by_period_for_vacation.currentTextChanged.connect(self.filtration_for_vacation)
+        self.ui.btn_edit.clicked.connect(self.set_enable_inputs)
+        self.ui.tableWidget_skips.itemClicked.connect(self.ask_del_for_skips)
+        self.ui.tableWidget_vacations.itemClicked.connect(self.ask_del_for_vacations)
+        self.ui.tableWidget_education.itemClicked.connect(self.ask_del_for_education)
+        self.ui.pushButton_add_skips.clicked.connect(self.add_skip)
+        self.ui.pushButton_add_vacation.clicked.connect(self.add_vacation)
+        self.ui.pushButton_add_education.clicked.connect(self.add_education)
+
+    def add_education(self, item: QTableWidgetItem):
+        add_new_education = AddNewEvent(self, self.name)
+        add_new_education.exec()
+
+    def ask_del_for_education(self, item: QTableWidgetItem):
+        text_date = item.text()
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Удаление обучения")
+        msg_box.setText(f"Вы уверены, что хотите удалить обучение с датой: {text_date}?")
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        result = msg_box.exec()
+
+        if result == QMessageBox.Yes:
+            if item.column() == 0:
+                if delete_employee_education_by_name_and_date(self.name, text_date):
+                    self.setup()
+        else:
+            print(f"Отмена удаления отпуска с датой: {text_date}")
+
+    def ask_del_for_vacations(self, item: QTableWidgetItem):
+        text_date = item.text()
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Удаление отпуска")
+        msg_box.setText(f"Вы уверены, что хотите удалить отпуск с датой: {text_date}?")
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        result = msg_box.exec()
+
+        if result == QMessageBox.Yes:
+            if item.column() == 0:
+                if delete_employee_vacation_by_name_and_date(self.name, text_date):
+                    self.setup()
+        else:
+            print(f"Отмена удаления отпуска с датой: {text_date}")
+
+    def add_skip(self):
+        add_new_skip = AddNewSkip(self, self.name)
+        add_new_skip.exec()
+
+    def add_vacation(self):
+        add_new_vacation = AddNewVacation(self, self.name)
+        add_new_vacation.exec()
+
+    def ask_del_for_skips(self, item: QTableWidgetItem):
+        text_date = item.text()
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Удаление пропуска")
+        msg_box.setText(f"Вы уверены, что хотите удалить пропуск с датой: {text_date}?")
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        result = msg_box.exec()
+
+        if result == QMessageBox.Yes:
+            if item.column() == 0:
+                if delete_employee_skip_by_name_and_date(self.name, text_date):
+                    self.setup()
+        else:
+            print(f"Отмена удаления пропуска с датой: {text_date}")
+
+    def set_enable_inputs(self):
+        self.ui.input_date_of_birth_2.setEnabled(True)
+        self.ui.input_full_name_2.setEnabled(True)
+        self.ui.input_home_number_2.setEnabled(True)
+        self.ui.input_work_email.setEnabled(True)
+        self.ui.input_work_phone.setEnabled(True)
+        self.ui.input_more_info.setEnabled(True)
+        self.ui.optional_boss.setEnabled(True)
+        self.ui.optional_department.setEnabled(True)
+        self.ui.optional_cabinets.setEnabled(True)
+        self.ui.optional_helpers_2.setEnabled(True)
+        self.ui.optional_job_titles.setEnabled(True)
+        self.ui.optional_organizations.setEnabled(True)
+        self.ui.optional_sub_divisions.setEnabled(True)
 
 
     def dismiss_employee(self):
@@ -83,8 +261,8 @@ class EditEmployeeDialog(QDialog):
     
 
     def filtration_for_skips(self, filter_by: str):
-        self.ui.tableWidget_2.clearContents()
-        self.ui.tableWidget_2.setRowCount(0)
+        self.ui.tableWidget_skips.clearContents()
+        self.ui.tableWidget_skips.setRowCount(0)
         now = date.today()
         if filter_by == "Прошедшие":
             count_rows = 0
@@ -94,36 +272,36 @@ class EditEmployeeDialog(QDialog):
                     date_until = self.proccessing_date(str(self.skip_dates[i]["date_until"]))
                     if date_until <= now:
                         count_rows += 1
-                        self.ui.tableWidget_2.setRowCount(count_rows)
+                        self.ui.tableWidget_skips.setRowCount(count_rows)
                         q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y"))
                         q_item_date_until = QTableWidgetItem(date_until.strftime("%d.%m.%Y"))
-                        self.ui.tableWidget_2.setItem(count_rows-1, 0, q_item_date_since)
-                        self.ui.tableWidget_2.setItem(count_rows-1, 1, q_item_date_until)
+                        self.ui.tableWidget_skips.setItem(count_rows-1, 0, q_item_date_since)
+                        self.ui.tableWidget_skips.setItem(count_rows-1, 1, q_item_date_until)
         elif filter_by == "Текущие":
             count_rows = 0
             for i in range(len(self.skip_dates)):
                 if self.skip_dates[i]["date_until"] is None:
                     date_since = self.proccessing_date(str(self.skip_dates[i]["date_since"]))
                     count_rows += 1
-                    self.ui.tableWidget_2.setRowCount(count_rows)
+                    self.ui.tableWidget_skips.setRowCount(count_rows)
                     q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y"))
-                    self.ui.tableWidget_2.setItem(count_rows-1, 0, q_item_date_since)
+                    self.ui.tableWidget_skips.setItem(count_rows-1, 0, q_item_date_since)
         else:
-            self.ui.tableWidget_2.setRowCount(len(self.skip_dates))
+            self.ui.tableWidget_skips.setRowCount(len(self.skip_dates))
 
             for i in range (len(self.skip_dates)):
                 date_since = self.formatting_date(self.skip_dates[i]["date_since"])
                 date_since_item = QTableWidgetItem(date_since)
-                self.ui.tableWidget_2.setItem(i, 0, date_since_item)
+                self.ui.tableWidget_skips.setItem(i, 0, date_since_item)
                 if self.skip_dates[i]["date_until"] is not None:
                     date_until = self.formatting_date(self.skip_dates[i]["date_until"])
                     date_until_item = QTableWidgetItem(date_until)
-                    self.ui.tableWidget_2.setItem(i, 1, date_until_item)
+                    self.ui.tableWidget_skips.setItem(i, 1, date_until_item)
 
 
     def filtration_for_study(self, filter_by: str):
-        self.ui.tableWidget.clearContents()
-        self.ui.tableWidget.setRowCount(0)
+        self.ui.tableWidget_education.clearContents()
+        self.ui.tableWidget_education.setRowCount(0)
         now = datetime.now()
         if filter_by == "Прошедшие":
             count_rows = 0
@@ -132,11 +310,11 @@ class EditEmployeeDialog(QDialog):
                 date_until = self.proccessing_datetime(str(self.study_dates[i]["date_until"]))
                 if date_until < now:
                     count_rows += 1
-                    self.ui.tableWidget.setRowCount(count_rows)
+                    self.ui.tableWidget_education.setRowCount(count_rows)
                     q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y %H:%M:%S"))
                     q_item_date_until = QTableWidgetItem(date_until.strftime("%d.%m.%Y %H:%M:%S"))
-                    self.ui.tableWidget.setItem(count_rows-1, 0, q_item_date_since)
-                    self.ui.tableWidget.setItem(count_rows-1, 1, q_item_date_until)
+                    self.ui.tableWidget_education.setItem(count_rows-1, 0, q_item_date_since)
+                    self.ui.tableWidget_education.setItem(count_rows-1, 1, q_item_date_until)
         elif filter_by == "Текущие":
             count_rows = 0
             for i in range(len(self.study_dates)):
@@ -144,11 +322,11 @@ class EditEmployeeDialog(QDialog):
                 date_until = self.proccessing_datetime(str(self.study_dates[i]["date_until"]))
                 if date_since <= now <= date_until:
                     count_rows += 1
-                    self.ui.tableWidget.setRowCount(count_rows)
+                    self.ui.tableWidget_education.setRowCount(count_rows)
                     q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y %H:%M:%S"))
                     q_item_date_until = QTableWidgetItem(date_until.strftime("%d.%m.%Y %H:%M:%S"))
-                    self.ui.tableWidget.setItem(count_rows-1, 0, q_item_date_since)
-                    self.ui.tableWidget.setItem(count_rows-1, 1, q_item_date_until)
+                    self.ui.tableWidget_education.setItem(count_rows-1, 0, q_item_date_since)
+                    self.ui.tableWidget_education.setItem(count_rows-1, 1, q_item_date_until)
         elif filter_by == "Будущие":
             count_rows = 0
             for i in range(len(self.study_dates)):
@@ -156,26 +334,26 @@ class EditEmployeeDialog(QDialog):
                 date_until = self.proccessing_datetime(str(self.study_dates[i]["date_until"]))
                 if now < date_since:
                     count_rows += 1
-                    self.ui.tableWidget.setRowCount(count_rows)
+                    self.ui.tableWidget_education.setRowCount(count_rows)
                     q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y %H:%M:%S"))
                     q_item_date_until = QTableWidgetItem(date_until.strftime("%d.%m.%Y %H:%M:%S"))
-                    self.ui.tableWidget.setItem(count_rows-1, 0, q_item_date_since)
-                    self.ui.tableWidget.setItem(count_rows-1, 1, q_item_date_until)
+                    self.ui.tableWidget_education.setItem(count_rows-1, 0, q_item_date_since)
+                    self.ui.tableWidget_education.setItem(count_rows-1, 1, q_item_date_until)
         else:
-            self.ui.tableWidget.setRowCount(len(self.study_dates))
+            self.ui.tableWidget_education.setRowCount(len(self.study_dates))
 
             for i in range (len(self.study_dates)):
         
                 date_since = self.formatting_datetime(self.study_dates[i]["date_since"])
                 date_since_item = QTableWidgetItem(date_since)
-                self.ui.tableWidget.setItem(i, 0, date_since_item)
+                self.ui.tableWidget_education.setItem(i, 0, date_since_item)
                 date_until = self.formatting_datetime(self.study_dates[i]["date_until"])
                 date_until_item = QTableWidgetItem(date_until)
-                self.ui.tableWidget.setItem(i, 1, date_until_item)
+                self.ui.tableWidget_education.setItem(i, 1, date_until_item)
     
     def filtration_for_vacation(self, filter_by: str):
-        self.ui.tableWidget_3.clearContents()
-        self.ui.tableWidget_3.setRowCount(0)
+        self.ui.tableWidget_vacations.clearContents()
+        self.ui.tableWidget_vacations.setRowCount(0)
         now = date.today()
         if filter_by == "Прошедшие":
             count_rows = 0
@@ -185,11 +363,11 @@ class EditEmployeeDialog(QDialog):
                     date_until = self.proccessing_date(str(self.vacation_dates[i]["date_until"]))
                     if date_until < now:
                         count_rows += 1
-                        self.ui.tableWidget_3.setRowCount(count_rows)
+                        self.ui.tableWidget_vacations.setRowCount(count_rows)
                         q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y"))
                         q_item_date_until = QTableWidgetItem(date_until.strftime("%d.%m.%Y"))
-                        self.ui.tableWidget_3.setItem(count_rows-1, 0, q_item_date_since)
-                        self.ui.tableWidget_3.setItem(count_rows-1, 1, q_item_date_until)
+                        self.ui.tableWidget_vacations.setItem(count_rows-1, 0, q_item_date_since)
+                        self.ui.tableWidget_vacations.setItem(count_rows-1, 1, q_item_date_until)
         elif filter_by == "Текущие":
             count_rows = 0
             for i in range(len(self.vacation_dates)):
@@ -198,16 +376,16 @@ class EditEmployeeDialog(QDialog):
                     date_until = self.proccessing_date(str(self.vacation_dates[i]["date_until"]))
                     if date_since <= now <= date_until:
                         count_rows += 1
-                        self.ui.tableWidget_3.setRowCount(count_rows)
+                        self.ui.tableWidget_vacations.setRowCount(count_rows)
                         q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y"))
                         q_item_date_until = QTableWidgetItem(date_until.strftime("%d.%m.%Y"))
-                        self.ui.tableWidget_3.setItem(count_rows-1, 0, q_item_date_since)
-                        self.ui.tableWidget_3.setItem(count_rows-1, 1, q_item_date_until)
+                        self.ui.tableWidget_vacations.setItem(count_rows-1, 0, q_item_date_since)
+                        self.ui.tableWidget_vacations.setItem(count_rows-1, 1, q_item_date_until)
                 else:
                     count_rows += 1
-                    self.ui.tableWidget_3.setRowCount(count_rows)
+                    self.ui.tableWidget_vacations.setRowCount(count_rows)
                     q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y"))
-                    self.ui.tableWidget_3.setItem(count_rows-1, 0, q_item_date_since)
+                    self.ui.tableWidget_vacations.setItem(count_rows-1, 0, q_item_date_since)
         elif filter_by == "Будущие":
             count_rows = 0
             for i in range(len(self.vacation_dates)):
@@ -216,26 +394,26 @@ class EditEmployeeDialog(QDialog):
                     date_until = self.proccessing_date(str(self.vacation_dates[i]["date_until"]))
                     if now < date_since:
                         count_rows += 1
-                        self.ui.tableWidget_3.setRowCount(count_rows)
+                        self.ui.tableWidget_vacations.setRowCount(count_rows)
                         q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y"))
                         q_item_date_until = QTableWidgetItem(date_until.strftime("%d.%m.%Y"))
-                        self.ui.tableWidget_3.setItem(count_rows-1, 0, q_item_date_since)
-                        self.ui.tableWidget_3.setItem(count_rows-1, 1, q_item_date_until)
+                        self.ui.tableWidget_vacations.setItem(count_rows-1, 0, q_item_date_since)
+                        self.ui.tableWidget_vacations.setItem(count_rows-1, 1, q_item_date_until)
                 else:
                     count_rows += 1
-                    self.ui.tableWidget_3.setRowCount(count_rows)
+                    self.ui.tableWidget_vacations.setRowCount(count_rows)
                     q_item_date_since = QTableWidgetItem(date_since.strftime("%d.%m.%Y"))
-                    self.ui.tableWidget_3.setItem(count_rows-1, 0, q_item_date_since)
+                    self.ui.tableWidget_vacations.setItem(count_rows-1, 0, q_item_date_since)
         else:
-            self.ui.tableWidget_3.setRowCount(len(self.vacation_dates))
+            self.ui.tableWidget_vacations.setRowCount(len(self.vacation_dates))
 
             for i in range (len(self.vacation_dates)):
                 date_since = self.formatting_date(self.vacation_dates[i]["date_since"])
                 date_since_item = QTableWidgetItem(date_since)
-                self.ui.tableWidget_3.setItem(i, 0, date_since_item)
+                self.ui.tableWidget_vacations.setItem(i, 0, date_since_item)
                 date_until = self.formatting_date(self.vacation_dates[i]["date_until"])
                 date_until_item = QTableWidgetItem(date_until)
-                self.ui.tableWidget_3.setItem(i, 1, date_until_item)
+                self.ui.tableWidget_vacations.setItem(i, 1, date_until_item)
                 
 
 
@@ -254,9 +432,13 @@ class EditEmployeeDialog(QDialog):
             self.ui.frame_vacation_date.setHidden(True)
 
     def setup(self):
-        self.ui.tableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.ui.tableWidget_2.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.ui.tableWidget_3.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.study_dates = get_study_date_by_employee_name(self.name)
+        self.vacation_dates = get_vacations_by_employee_name(self.name)
+        self.skip_dates = get_skip_dates_by_employee_name(self.name)
+
+        self.ui.tableWidget_education.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.ui.tableWidget_skips.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.ui.tableWidget_vacations.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.ui.optional_boss.addItems(self.employees)
         self.ui.optional_cabinets.addItems(self.cabinets)
         self.ui.optional_boss.addItems(self.employees)
@@ -300,42 +482,77 @@ class EditEmployeeDialog(QDialog):
         try:
             print(self.study_dates["error"])
         except:
-            self.ui.tableWidget.setRowCount(len(self.study_dates))
+            self.ui.tableWidget_education.setRowCount(len(self.study_dates))
             for i in range (len(self.study_dates)):
                 date_since = self.formatting_datetime(self.study_dates[i]["date_since"])
                 date_since_item = QTableWidgetItem(date_since)
-                self.ui.tableWidget.setItem(i, 0, date_since_item)
+                self.ui.tableWidget_education.setItem(i, 0, date_since_item)
                 date_until = self.formatting_datetime(self.study_dates[i]["date_until"])
                 date_until_item = QTableWidgetItem(date_until)
-                self.ui.tableWidget.setItem(i, 1, date_until_item)
+                self.ui.tableWidget_education.setItem(i, 1, date_until_item)
         try:
             print(self.skip_dates["error"])
         except:
-            self.ui.tableWidget_2.setRowCount(len(self.skip_dates))
+            self.ui.tableWidget_skips.setRowCount(len(self.skip_dates))
             for i in range(len(self.skip_dates)):
                 date_since = self.formatting_date(self.skip_dates[i]["date_since"])
                 date_since_item = QTableWidgetItem(date_since)
-                self.ui.tableWidget_2.setItem(i, 0, date_since_item)
+                self.ui.tableWidget_skips.setItem(i, 0, date_since_item)
                 if self.skip_dates[i]["date_until"] is not None:
                     date_until = self.formatting_date(self.skip_dates[i]["date_until"])
                     date_until_item = QTableWidgetItem(date_until)
-                    self.ui.tableWidget_2.setItem(i, 1, date_until_item)
+                    self.ui.tableWidget_skips.setItem(i, 1, date_until_item)
         
         try:
             print(self.vacation_dates["error"])
         except:
-            self.ui.tableWidget_3.setRowCount(len(self.vacation_dates))
+            self.ui.tableWidget_vacations.setRowCount(len(self.vacation_dates))
             for i in range (len(self.vacation_dates)):
                 date_since = self.formatting_date(self.vacation_dates[i]["date_since"])
                 date_since_item = QTableWidgetItem(date_since)
-                self.ui.tableWidget_3.setItem(i, 0, date_since_item)
+                self.ui.tableWidget_vacations.setItem(i, 0, date_since_item)
                 if self.vacation_dates[i]["date_until"] is not None:
                     date_until = self.formatting_date(self.vacation_dates[i]["date_until"])
                     date_until_item = QTableWidgetItem(date_until)
-                    self.ui.tableWidget_3.setItem(i, 1, date_until_item)
+                    self.ui.tableWidget_vacations.setItem(i, 1, date_until_item)
         
 
+    def check_phone(self, phone):
+
+        if len(phone) > 20:
+            QMessageBox.warning(self, "Предупреждение", "В номере телефона не может быть больше 20 символов.",
+                                QMessageBox.StandardButton.Ok)
+            return False
+
+        accepted_chars = "0123456789-()#+ "
+        
+        for char in phone:
+            if char not in accepted_chars:
+                QMessageBox.warning(self, "Предупреждение", "В номере телефона недопустимые символы.",
+                                    QMessageBox.StandardButton.Ok)
+                return False
+        
+        return True
+    
+    def check_email(self, email):
+        pattern = r'^[^@]+@[^@]+\.[^@]+$'
+        
+        if not re.match(pattern, email):
+            QMessageBox.warning(self, "Предупреждение", "Неверный формат email.", QMessageBox.StandardButton.Ok)
+            return False
+        
+        return True
+
     def save(self):
+
+        if not self.check_phone(self.ui.input_work_phone.text()):
+            return False
+    
+        if not self.check_phone(self.ui.input_home_number_2.text()):
+            return False
+        
+        if not self.check_email(self.ui.input_work_email.text()):
+            return False
 
         full_name = self.ui.input_full_name_2.text()
         date_of_birth = self.ui.input_date_of_birth_2.text()

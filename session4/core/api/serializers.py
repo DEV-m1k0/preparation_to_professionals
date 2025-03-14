@@ -3,6 +3,12 @@ from models.models import *
 from rest_framework import serializers
 
 
+class CalendarSkipSerializer(ModelSerializer):
+    class Meta:
+        model = CalendarSkip
+        fields = ["date_since", "date_until"]
+
+
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document

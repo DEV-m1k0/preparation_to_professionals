@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'edit_employee.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.1
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -48,11 +48,17 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 363, 928))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -364, 367, 899))
         self.verticalLayout_9 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.btn_edit = QPushButton(self.scrollAreaWidgetContents)
+        self.btn_edit.setObjectName(u"btn_edit")
+        self.btn_edit.setStyleSheet(u"background-color: rgb(85, 170, 255);")
+
+        self.verticalLayout_2.addWidget(self.btn_edit)
+
         self.label_2 = QLabel(self.scrollAreaWidgetContents)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setStyleSheet(u"color: black;")
@@ -61,6 +67,7 @@ class Ui_Dialog(object):
 
         self.input_full_name_2 = QLineEdit(self.scrollAreaWidgetContents)
         self.input_full_name_2.setObjectName(u"input_full_name_2")
+        self.input_full_name_2.setEnabled(False)
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
@@ -91,6 +98,7 @@ class Ui_Dialog(object):
 
         self.input_date_of_birth_2 = QDateEdit(self.scrollAreaWidgetContents)
         self.input_date_of_birth_2.setObjectName(u"input_date_of_birth_2")
+        self.input_date_of_birth_2.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.input_date_of_birth_2.sizePolicy().hasHeightForWidth())
         self.input_date_of_birth_2.setSizePolicy(sizePolicy1)
         self.input_date_of_birth_2.setMinimumSize(QSize(0, 30))
@@ -115,6 +123,7 @@ class Ui_Dialog(object):
 
         self.input_home_number_2 = QLineEdit(self.scrollAreaWidgetContents)
         self.input_home_number_2.setObjectName(u"input_home_number_2")
+        self.input_home_number_2.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.input_home_number_2.sizePolicy().hasHeightForWidth())
         self.input_home_number_2.setSizePolicy(sizePolicy1)
         self.input_home_number_2.setMinimumSize(QSize(0, 30))
@@ -140,6 +149,7 @@ class Ui_Dialog(object):
 
         self.input_work_phone = QLineEdit(self.scrollAreaWidgetContents)
         self.input_work_phone.setObjectName(u"input_work_phone")
+        self.input_work_phone.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.input_work_phone.sizePolicy().hasHeightForWidth())
         self.input_work_phone.setSizePolicy(sizePolicy1)
         self.input_work_phone.setMinimumSize(QSize(0, 30))
@@ -165,6 +175,7 @@ class Ui_Dialog(object):
 
         self.input_work_email = QLineEdit(self.scrollAreaWidgetContents)
         self.input_work_email.setObjectName(u"input_work_email")
+        self.input_work_email.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.input_work_email.sizePolicy().hasHeightForWidth())
         self.input_work_email.setSizePolicy(sizePolicy1)
         self.input_work_email.setMinimumSize(QSize(0, 30))
@@ -190,6 +201,7 @@ class Ui_Dialog(object):
 
         self.optional_job_titles = QComboBox(self.scrollAreaWidgetContents)
         self.optional_job_titles.setObjectName(u"optional_job_titles")
+        self.optional_job_titles.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.optional_job_titles.sizePolicy().hasHeightForWidth())
         self.optional_job_titles.setSizePolicy(sizePolicy1)
         self.optional_job_titles.setMinimumSize(QSize(0, 30))
@@ -211,6 +223,7 @@ class Ui_Dialog(object):
 
         self.optional_cabinets = QComboBox(self.scrollAreaWidgetContents)
         self.optional_cabinets.setObjectName(u"optional_cabinets")
+        self.optional_cabinets.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.optional_cabinets.sizePolicy().hasHeightForWidth())
         self.optional_cabinets.setSizePolicy(sizePolicy1)
         self.optional_cabinets.setMinimumSize(QSize(0, 30))
@@ -232,6 +245,7 @@ class Ui_Dialog(object):
 
         self.optional_boss = QComboBox(self.scrollAreaWidgetContents)
         self.optional_boss.setObjectName(u"optional_boss")
+        self.optional_boss.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.optional_boss.sizePolicy().hasHeightForWidth())
         self.optional_boss.setSizePolicy(sizePolicy1)
         self.optional_boss.setMinimumSize(QSize(0, 30))
@@ -253,6 +267,7 @@ class Ui_Dialog(object):
 
         self.optional_helpers_2 = QComboBox(self.scrollAreaWidgetContents)
         self.optional_helpers_2.setObjectName(u"optional_helpers_2")
+        self.optional_helpers_2.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.optional_helpers_2.sizePolicy().hasHeightForWidth())
         self.optional_helpers_2.setSizePolicy(sizePolicy1)
         self.optional_helpers_2.setMinimumSize(QSize(0, 30))
@@ -275,6 +290,7 @@ class Ui_Dialog(object):
 
         self.optional_organizations = QComboBox(self.scrollAreaWidgetContents)
         self.optional_organizations.setObjectName(u"optional_organizations")
+        self.optional_organizations.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.optional_organizations.sizePolicy().hasHeightForWidth())
         self.optional_organizations.setSizePolicy(sizePolicy1)
         self.optional_organizations.setMinimumSize(QSize(0, 30))
@@ -303,6 +319,7 @@ class Ui_Dialog(object):
 
         self.optional_sub_divisions = QComboBox(self.scrollAreaWidgetContents)
         self.optional_sub_divisions.setObjectName(u"optional_sub_divisions")
+        self.optional_sub_divisions.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.optional_sub_divisions.sizePolicy().hasHeightForWidth())
         self.optional_sub_divisions.setSizePolicy(sizePolicy1)
         self.optional_sub_divisions.setMinimumSize(QSize(0, 30))
@@ -327,6 +344,7 @@ class Ui_Dialog(object):
 
         self.optional_department = QComboBox(self.scrollAreaWidgetContents)
         self.optional_department.setObjectName(u"optional_department")
+        self.optional_department.setEnabled(False)
         sizePolicy1.setHeightForWidth(self.optional_department.sizePolicy().hasHeightForWidth())
         self.optional_department.setSizePolicy(sizePolicy1)
         self.optional_department.setMinimumSize(QSize(0, 30))
@@ -349,6 +367,7 @@ class Ui_Dialog(object):
 
         self.input_more_info = QPlainTextEdit(self.scrollAreaWidgetContents)
         self.input_more_info.setObjectName(u"input_more_info")
+        self.input_more_info.setEnabled(False)
         self.input_more_info.setStyleSheet(u"	background-color: white;\n"
 "	color: black;")
 
@@ -385,7 +404,7 @@ class Ui_Dialog(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 353, 500))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 364, 515))
         self.verticalLayout_20 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
         self.horizontalLayout_2 = QHBoxLayout()
@@ -431,18 +450,25 @@ class Ui_Dialog(object):
 
         self.verticalLayout_5.addLayout(self.horizontalLayout_4)
 
-        self.tableWidget = QTableWidget(self.frame_study_date)
-        if (self.tableWidget.columnCount() < 2):
-            self.tableWidget.setColumnCount(2)
+        self.tableWidget_education = QTableWidget(self.frame_study_date)
+        if (self.tableWidget_education.columnCount() < 2):
+            self.tableWidget_education.setColumnCount(2)
         __qtablewidgetitem = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.tableWidget_education.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        self.tableWidget.setObjectName(u"tableWidget")
-        self.tableWidget.setStyleSheet(u"color: black;")
-        self.tableWidget.setSortingEnabled(True)
+        self.tableWidget_education.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.tableWidget_education.setObjectName(u"tableWidget_education")
+        self.tableWidget_education.setStyleSheet(u"color: black;")
+        self.tableWidget_education.setSortingEnabled(True)
 
-        self.verticalLayout_5.addWidget(self.tableWidget)
+        self.verticalLayout_5.addWidget(self.tableWidget_education)
+
+        self.pushButton_add_education = QPushButton(self.frame_study_date)
+        self.pushButton_add_education.setObjectName(u"pushButton_add_education")
+        self.pushButton_add_education.setStyleSheet(u"background-color: green;\n"
+"")
+
+        self.verticalLayout_5.addWidget(self.pushButton_add_education)
 
 
         self.verticalLayout_20.addWidget(self.frame_study_date)
@@ -474,18 +500,25 @@ class Ui_Dialog(object):
 
         self.verticalLayout_18.addLayout(self.horizontalLayout_5)
 
-        self.tableWidget_2 = QTableWidget(self.frame_skips_date)
-        if (self.tableWidget_2.columnCount() < 2):
-            self.tableWidget_2.setColumnCount(2)
+        self.tableWidget_skips = QTableWidget(self.frame_skips_date)
+        if (self.tableWidget_skips.columnCount() < 2):
+            self.tableWidget_skips.setColumnCount(2)
         __qtablewidgetitem2 = QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(0, __qtablewidgetitem2)
+        self.tableWidget_skips.setHorizontalHeaderItem(0, __qtablewidgetitem2)
         __qtablewidgetitem3 = QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(1, __qtablewidgetitem3)
-        self.tableWidget_2.setObjectName(u"tableWidget_2")
-        self.tableWidget_2.setStyleSheet(u"color: black;")
-        self.tableWidget_2.setSortingEnabled(True)
+        self.tableWidget_skips.setHorizontalHeaderItem(1, __qtablewidgetitem3)
+        self.tableWidget_skips.setObjectName(u"tableWidget_skips")
+        self.tableWidget_skips.setStyleSheet(u"color: black;")
+        self.tableWidget_skips.setSortingEnabled(True)
 
-        self.verticalLayout_18.addWidget(self.tableWidget_2)
+        self.verticalLayout_18.addWidget(self.tableWidget_skips)
+
+        self.pushButton_add_skips = QPushButton(self.frame_skips_date)
+        self.pushButton_add_skips.setObjectName(u"pushButton_add_skips")
+        self.pushButton_add_skips.setStyleSheet(u"background-color: green;\n"
+"")
+
+        self.verticalLayout_18.addWidget(self.pushButton_add_skips)
 
 
         self.verticalLayout_20.addWidget(self.frame_skips_date)
@@ -518,18 +551,25 @@ class Ui_Dialog(object):
 
         self.verticalLayout_19.addLayout(self.horizontalLayout_6)
 
-        self.tableWidget_3 = QTableWidget(self.frame_vacation_date)
-        if (self.tableWidget_3.columnCount() < 2):
-            self.tableWidget_3.setColumnCount(2)
+        self.tableWidget_vacations = QTableWidget(self.frame_vacation_date)
+        if (self.tableWidget_vacations.columnCount() < 2):
+            self.tableWidget_vacations.setColumnCount(2)
         __qtablewidgetitem4 = QTableWidgetItem()
-        self.tableWidget_3.setHorizontalHeaderItem(0, __qtablewidgetitem4)
+        self.tableWidget_vacations.setHorizontalHeaderItem(0, __qtablewidgetitem4)
         __qtablewidgetitem5 = QTableWidgetItem()
-        self.tableWidget_3.setHorizontalHeaderItem(1, __qtablewidgetitem5)
-        self.tableWidget_3.setObjectName(u"tableWidget_3")
-        self.tableWidget_3.setStyleSheet(u"color: black;")
-        self.tableWidget_3.setSortingEnabled(True)
+        self.tableWidget_vacations.setHorizontalHeaderItem(1, __qtablewidgetitem5)
+        self.tableWidget_vacations.setObjectName(u"tableWidget_vacations")
+        self.tableWidget_vacations.setStyleSheet(u"color: black;")
+        self.tableWidget_vacations.setSortingEnabled(True)
 
-        self.verticalLayout_19.addWidget(self.tableWidget_3)
+        self.verticalLayout_19.addWidget(self.tableWidget_vacations)
+
+        self.pushButton_add_vacation = QPushButton(self.frame_vacation_date)
+        self.pushButton_add_vacation.setObjectName(u"pushButton_add_vacation")
+        self.pushButton_add_vacation.setStyleSheet(u"background-color: green;\n"
+"")
+
+        self.verticalLayout_19.addWidget(self.pushButton_add_vacation)
 
 
         self.verticalLayout_20.addWidget(self.frame_vacation_date)
@@ -568,6 +608,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+        self.btn_edit.setText(QCoreApplication.translate("Dialog", u"\u270f\ufe0f", None))
         self.label_2.setText(QCoreApplication.translate("Dialog", u"\u0424\u0418\u041e:", None))
         self.label_6.setText(QCoreApplication.translate("Dialog", u"\u0414\u0435\u043d\u044c \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f", None))
         self.label_7.setText(QCoreApplication.translate("Dialog", u"\u0414\u043e\u043c\u0430\u0448\u043d\u0438\u0439 \u043d\u043e\u043c\u0435\u0440 \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0430:", None))
@@ -593,29 +634,32 @@ class Ui_Dialog(object):
         self.combobox_filtration_by_period_for_study.setItemText(2, QCoreApplication.translate("Dialog", u"\u0422\u0435\u043a\u0443\u0449\u0438\u0435", None))
         self.combobox_filtration_by_period_for_study.setItemText(3, QCoreApplication.translate("Dialog", u"\u0411\u0443\u0434\u0443\u0449\u0438\u0435", None))
 
-        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem = self.tableWidget_education.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("Dialog", u"\u041d\u0430\u0447\u0430\u043b\u043e", None));
-        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1 = self.tableWidget_education.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("Dialog", u"\u041a\u043e\u043d\u0435\u0446", None));
+        self.pushButton_add_education.setText(QCoreApplication.translate("Dialog", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c", None))
         self.label_4.setText(QCoreApplication.translate("Dialog", u"\u041f\u0440\u043e\u043f\u0443\u0441\u043a\u0438", None))
         self.combobox_filtration_by_period_for_skips.setItemText(0, QCoreApplication.translate("Dialog", u"\u0424\u0438\u043b\u044c\u0442\u0440\u0430\u0446\u0438\u044f", None))
         self.combobox_filtration_by_period_for_skips.setItemText(1, QCoreApplication.translate("Dialog", u"\u041f\u0440\u043e\u0448\u0435\u0434\u0448\u0438\u0435", None))
         self.combobox_filtration_by_period_for_skips.setItemText(2, QCoreApplication.translate("Dialog", u"\u0422\u0435\u043a\u0443\u0449\u0438\u0435", None))
 
-        ___qtablewidgetitem2 = self.tableWidget_2.horizontalHeaderItem(0)
+        ___qtablewidgetitem2 = self.tableWidget_skips.horizontalHeaderItem(0)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("Dialog", u"\u041d\u0430\u0447\u0430\u043b\u043e", None));
-        ___qtablewidgetitem3 = self.tableWidget_2.horizontalHeaderItem(1)
+        ___qtablewidgetitem3 = self.tableWidget_skips.horizontalHeaderItem(1)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("Dialog", u"\u041a\u043e\u043d\u0435\u0446", None));
+        self.pushButton_add_skips.setText(QCoreApplication.translate("Dialog", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c", None))
         self.label_5.setText(QCoreApplication.translate("Dialog", u"\u041e\u0442\u043f\u0443\u0441\u043a\u0438", None))
         self.combobox_filtration_by_period_for_vacation.setItemText(0, QCoreApplication.translate("Dialog", u"\u0424\u0438\u043b\u044c\u0442\u0440\u0430\u0446\u0438\u044f", None))
         self.combobox_filtration_by_period_for_vacation.setItemText(1, QCoreApplication.translate("Dialog", u"\u041f\u0440\u043e\u0448\u0435\u0434\u0448\u0438\u0435", None))
         self.combobox_filtration_by_period_for_vacation.setItemText(2, QCoreApplication.translate("Dialog", u"\u0422\u0435\u043a\u0443\u0449\u0438\u0435", None))
         self.combobox_filtration_by_period_for_vacation.setItemText(3, QCoreApplication.translate("Dialog", u"\u0411\u0443\u0434\u0443\u0449\u0438\u0435", None))
 
-        ___qtablewidgetitem4 = self.tableWidget_3.horizontalHeaderItem(0)
+        ___qtablewidgetitem4 = self.tableWidget_vacations.horizontalHeaderItem(0)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("Dialog", u"\u041d\u0430\u0447\u0430\u043b\u043e", None));
-        ___qtablewidgetitem5 = self.tableWidget_3.horizontalHeaderItem(1)
+        ___qtablewidgetitem5 = self.tableWidget_vacations.horizontalHeaderItem(1)
         ___qtablewidgetitem5.setText(QCoreApplication.translate("Dialog", u"\u041a\u043e\u043d\u0435\u0446", None));
+        self.pushButton_add_vacation.setText(QCoreApplication.translate("Dialog", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"\u0423\u0432\u043e\u043b\u0438\u0442\u044c", None))
     # retranslateUi
 

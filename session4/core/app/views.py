@@ -11,8 +11,12 @@ from django.db.models import Q
 
 class MainView(TemplateView, ContextMixin):
     template_name = 'base.html'
-    events = requests.get("http://127.0.0.1:4444/events").json()
-    news = xmltodict.parse(requests.get("http://127.0.0.1:4444/news").text)["rss"]["channel"]["item"]
+    # try:
+    #     events = requests.get("http://127.0.0.1:4444/events").json()
+    #     news = xmltodict.parse(requests.get("http://127.0.0.1:4444/news").text)["rss"]["channel"]["item"]
+    # except:
+    events = []
+    news = []
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -51,14 +51,14 @@ class Cabinet(models.Model):
 class CalendarSkip(models.Model):
     "Модель с календарем пропусков"
     employee = models.ForeignKey("Employee", null=True, on_delete=models.SET_NULL)
-    date_since = models.DateField()
+    date_since = models.DateField(null=True, blank=True)
     date_until = models.DateField(null=True, blank=True)
 
 
 class CalendarVacation(models.Model):
     "Модель с календарем отпусков"
     employee = models.ForeignKey("Employee", null=True, on_delete=models.SET_NULL)
-    date_since = models.DateField()
+    date_since = models.DateField(null=True, blank=True)
     date_until = models.DateField(null=True, blank=True)
     
 
@@ -67,11 +67,11 @@ class Event(models.Model):
     title = models.CharField(max_length=255)
     date_since = models.DateTimeField()
     date_until = models.DateTimeField()
-    description = models.TextField(max_length=255)
-    status = models.BooleanField()
+    description = models.TextField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(blank=True, null=True)
     responsible_worker = models.ForeignKey("Employee", related_name="responsible_workers", null=True, blank=True, on_delete=models.SET_NULL)
-    event_type_id = models.ForeignKey("EventType", on_delete=models.CASCADE, related_name="event_type")
-    education_id = models.ForeignKey("Education", on_delete=models.CASCADE, related_name="education")
+    event_type_id = models.ForeignKey("EventType", on_delete=models.CASCADE, related_name="event_type", blank=True, null=True)
+    education_id = models.ForeignKey("Education", on_delete=models.CASCADE, related_name="education", blank=True, null=True)
     people = models.ManyToManyField("Employee", blank=True)
 
 class EducationType(models.Model):

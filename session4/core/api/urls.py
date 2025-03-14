@@ -26,4 +26,7 @@ urlpatterns = [
     path("employee/dismiss", EmployeeDismissAPIView.as_view()),
     path("employees/search_department/<str:department>", EmployeeSearchByDepartmentApiView.as_view()),
     path("employees/search_name/<str:name>", EmployeeSearchByNameApiView.as_view()),
+    path("skip", CalendarSkipAPIView.as_view()),
+    path("vacation", CalendarVacationAPIView.as_view()),
+    path("event", CalendarEventAPIView.as_view()),
 ]

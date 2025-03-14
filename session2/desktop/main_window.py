@@ -159,8 +159,8 @@ class Ui_MainWindow(object):
 "	padding: 10 0 10 10;\n"
 "	margin-bottom: 5px;\n"
 "	color: black;\n"
-"	background-color: rgb(224, 244, 200);\n"
-"	border-radius: 10px;\n"
+# "	background-color: rgb(224, 244, 200);\n"
+# "	border-radius: 10px;\n"
 "}")
 
         self.verticalLayout_2.addWidget(self.listWidget)

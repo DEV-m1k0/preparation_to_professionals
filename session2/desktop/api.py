@@ -5,6 +5,54 @@ import requests
 Файл для взаимодействия настольного приложения с апи на сервере
 """
 
+def delete_employee_education_by_name_and_date(name: str, date: str):
+    url = f"http://127.0.0.1:8000/api/v1/event?employee={name}&date={date}"
+    response = requests.delete(url)
+    
+    if response.status_code == 200:
+        return True
+    return False
+
+def add_event_by_employee(event_title: str, employee_name: str, date_since: str, date_until: str):
+    url = f"http://127.0.0.1:8000/api/v1/event?event_title={event_title}&employee={employee_name}&date_since={date_since}&date_until={date_until}"
+    response = requests.post(url)
+    
+    if response.status_code == 201:
+        return True
+    return False
+
+def add_vacation_by_employee(employee_name: str, date_since: str, date_before: str):
+    url = f"http://127.0.0.1:8000/api/v1/vacation?employee={employee_name}&date_since={date_since}&date_before={date_before}"
+    response = requests.post(url)
+    
+    if response.status_code == 201:
+        return True
+    return False
+
+def delete_employee_vacation_by_name_and_date(employee_name: str, date: str):
+    url = f"http://127.0.0.1:8000/api/v1/vacation?employee={employee_name}&date={date}"
+    response = requests.delete(url)
+    
+    if response.status_code == 200:
+        return True
+    return False
+
+def add_skip_by_employee(employee_name: str, date_since: str, date_before: str):
+    url = f"http://127.0.0.1:8000/api/v1/skip?employee={employee_name}&date_since={date_since}&date_before={date_before}"
+    response = requests.post(url)
+    
+    if response.status_code == 201:
+        return True
+    return False
+
+def delete_employee_skip_by_name_and_date(employee_name: str, date: str):
+    url = f"http://127.0.0.1:8000/api/v1/skip?employee={employee_name}&date={date}"
+    response = requests.delete(url)
+    
+    if response.status_code == 200:
+        return True
+    return False
+
 
 def dismiss_employee_by_name(name: str):
     url = f"http://127.0.0.1:8000/api/v1/employee/dismiss?employee={name}"

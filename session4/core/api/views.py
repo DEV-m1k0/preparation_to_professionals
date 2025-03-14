@@ -9,11 +9,157 @@ from .serializers import *
 from rest_framework import permissions
 from datetime import datetime
 import random
+from django.db.models import Q
 
 
 """
 Файл с апишками
 """
+
+class CalendarEventAPIView(generics.DestroyAPIView, generics.CreateAPIView):
+    serializer_class = EventSerializers
+
+    def delete(self, request, *args, **kwargs):
+        
+        employee_name = request.GET.get("employee")
+        event_date = datetime.strptime(request.GET.get('date'), '%d.%m.%Y %H:%M:%S')
+
+        # try:
+        employee_obj = Employee.objects.get(username=employee_name)
+        Event.objects.filter(Q(responsible_worker=employee_obj) & (Q(date_since=event_date) | Q(date_until=event_date))).first().delete()
+        return Response(
+            {
+                "message": f"Обучение с Промежутком с датой {event_date.strftime('%d.%m.%Y %H:%M')} удален"
+            }, status=status.HTTP_200_OK
+        )
+        # except:
+        #     return Response(
+        #         {
+        #             "error": f"Произошла ошибка при удалении обучения с Промежутком с датой {event_date.strftime('%d.%m.%Y %H:%M')}"
+        #         }, status=status.HTTP_400_BAD_REQUEST
+        #     )
+
+    def create(self, request, *args, **kwargs):
+        employee_name = request.GET.get('employee')
+        event_title = request.GET.get('event_title')
+        date_since = datetime.strptime(request.GET.get('date_since'), '%d.%m.%Y %H:%M')
+        date_before = datetime.strptime(request.GET.get('date_until'), '%d.%m.%Y %H:%M')
+
+        print(date_since, type(date_since))
+        
+        employee_obj = Employee.objects.get(username=employee_name)
+
+        try:
+            Event.objects.create(title=event_title, responsible_worker=employee_obj, date_since=date_since, date_until=date_before)
+            return Response({
+                "message": f"Обучение {event_title} с датой {date_since} до {date_before} создано"
+            }, status=status.HTTP_201_CREATED)
+        except:
+            return Response(
+                {
+                    "error": f"Произошла ошибка при создании обучения {event_title}"
+                }, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def destroy(self, request, *args, **kwargs):
+        employee_name = request.GET.get("employee")
+        some_date: str = request.GET.get("date")
+
+        
+        employee_obj = Employee.objects.get(username=employee_name)
+        vacation_obj = CalendarVacation.objects.filter(Q(employee=employee_obj) & (Q(date_since=datetime.strptime(some_date, "%d.%m.%Y")) | Q(date_until=datetime.strptime(some_date, "%d.%m.%Y")))).first()
+
+        try:
+            if str(vacation_obj.date_since) == datetime.strptime(some_date, "%d.%m.%Y").strftime("%Y-%m-%d"):
+                vacation_obj.delete()
+                return Response({
+                    "message": f"Пропуск с даты {some_date} удален"
+                }, status=status.HTTP_200_OK)
+        except:
+            return Response({
+                "message": f"Произошла ошибка при удалении пропуска с датой {some_date}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+class CalendarVacationAPIView(generics.DestroyAPIView, generics.CreateAPIView):
+    serializer_class = VacationDateSerializers
+
+    def create(self, request, *args, **kwargs):
+        employee_name = request.GET.get('employee')
+        date_since = datetime.strptime(request.GET.get('date_since'), '%d.%m.%Y')
+        date_before = datetime.strptime(request.GET.get('date_before'), '%d.%m.%Y')
+        
+        employee_obj = Employee.objects.get(username=employee_name)
+
+        try:
+            CalendarVacation.objects.create(employee=employee_obj, date_since=date_since, date_until=date_before)
+            return Response({
+                "message": f"Пропуск с датой {date_since} до {date_before} создан"
+            }, status=status.HTTP_201_CREATED)
+        except:
+            return Response({
+                "message": f"Произошла ошибка при создании пропуска с датой {date_since} до {date_before}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        employee_name = request.GET.get("employee")
+        some_date: str = request.GET.get("date")
+
+        
+        employee_obj = Employee.objects.get(username=employee_name)
+        vacation_obj = CalendarVacation.objects.filter(Q(employee=employee_obj) & (Q(date_since=datetime.strptime(some_date, "%d.%m.%Y")) | Q(date_until=datetime.strptime(some_date, "%d.%m.%Y")))).first()
+
+        try:
+            if str(vacation_obj.date_since) == datetime.strptime(some_date, "%d.%m.%Y").strftime("%Y-%m-%d"):
+                vacation_obj.delete()
+                return Response({
+                    "message": f"Пропуск с даты {some_date} удален"
+                }, status=status.HTTP_200_OK)
+        except:
+            return Response({
+                "message": f"Произошла ошибка при удалении пропуска с датой {some_date}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CalendarSkipAPIView(generics.DestroyAPIView, generics.CreateAPIView):
+    serializer_class = CalendarSkipSerializer
+
+    def create(self, request, *args, **kwargs):
+        employee_name = request.GET.get('employee')
+        date_since = datetime.strptime(request.GET.get('date_since'), '%d.%m.%Y')
+        date_before = datetime.strptime(request.GET.get('date_before'), '%d.%m.%Y')
+        
+        employee_obj = Employee.objects.get(username=employee_name)
+
+        try:
+            CalendarSkip.objects.create(employee=employee_obj, date_since=date_since, date_until=date_before)
+            return Response({
+                "message": f"Пропуск с датой {date_since} до {date_before} создан"
+            }, status=status.HTTP_201_CREATED)
+        except:
+            return Response({
+                "message": f"Произошла ошибка при создании пропуска с датой {date_since} до {date_before}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        employee_name = request.GET.get("employee")
+        some_date: str = request.GET.get("date")
+
+        
+        employee_obj = Employee.objects.get(username=employee_name)
+        skip_obj = CalendarSkip.objects.filter(Q(employee=employee_obj) & (Q(date_since=datetime.strptime(some_date, "%d.%m.%Y")) | Q(date_until=datetime.strptime(some_date, "%d.%m.%Y")))).first()
+
+        try:
+            if str(skip_obj.date_since) == datetime.strptime(some_date, "%d.%m.%Y").strftime("%Y-%m-%d"):
+                skip_obj.delete()
+                return Response({
+                    "message": f"Пропуск с даты {some_date} удален"
+                }, status=status.HTTP_200_OK)
+        except:
+            return Response({
+                "message": f"Произошла ошибка при удалении пропуска с датой {some_date}"
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DocumentListAPIView(generics.ListAPIView):
@@ -61,9 +207,7 @@ class EmployeeDismissAPIView(APIView):
             employee_name: str = request.GET.get("employee")
             try:
                 employer = Employee.objects.get(username=employee_name)
-                print(employer)
                 employer_events = Event.objects.filter(responsible_worker=employer.pk)
-                print(employer_events)
                 if employer_events.count() == 0:
                     employer.is_active = False
                     employer.date_of_dismissal = date.today()
@@ -89,7 +233,6 @@ class SkipDateByEmployeeListAPIView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.GET.get("employee") is not None:
-            print(request.GET)
             employee_name: str = request.GET.get("employee")
             try:
                 employer = Employee.objects.get(username=employee_name)
@@ -268,26 +411,24 @@ class EmployeeSearchByNameApiView(ListAPIView):
 
 class EmployeeSearchByDepartmentApiView(ListAPIView):
     serializer_class = EmployeesSerializer
-    queryset = Employee.objects.filter(is_active=True)
+    queryset = Employee.objects.filter()
 
     def get(self, request, department: str, *args, **kwargs):
         try:
             organization = Organization.objects.get(title=department)
-            serializer = EmployeesSerializer(Employee.objects.filter(organization=organization, is_active=True), many=True)
+            serializer = EmployeesSerializer(Employee.objects.filter(organization=organization), many=True)
             return Response(serializer.data)
         except:
             pass
         try:
             sub_division = Subdivision.objects.get(title=department)
-            serializer = EmployeesSerializer(Employee.objects.filter(subdivision=sub_division, is_active=True), many=True)
+            serializer = EmployeesSerializer(Employee.objects.filter(subdivision=sub_division), many=True)
             return Response(serializer.data)
         except:
             pass
         try:
             sub_sub_division = SubSubDivision.objects.get(title=department)
-            print(sub_sub_division)
-            employees = Employee.objects.filter(sub_sub_division=sub_sub_division, is_active=True)
-            print(employees)
+            employees = Employee.objects.filter(sub_sub_division=sub_sub_division)
             serializer = EmployeesSerializer(employees, many=True)
             return Response(serializer.data)
         except:
