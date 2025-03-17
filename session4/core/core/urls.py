@@ -20,4 +20,4 @@ urlpatterns = [
     path('api/v1/Document/<int:documentId>/Comments', DocumentCommentListAPIView.as_view()),
     path('api/v1/document', DocumentCreateAPIView.as_view()),
     path('api/v1/', include('api.urls'))
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

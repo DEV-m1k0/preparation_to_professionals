@@ -7,3 +7,8 @@ class SearchForm(forms.Form):
         "class": "form-control w-100",
         "placeholder": "Поиск..."
     }))
+
+class VCardForm(forms.Form):
+    full_name = forms.CharField(widget=forms.TextInput(attrs={
+        "type": "hidden"
+    }))

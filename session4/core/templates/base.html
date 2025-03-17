@@ -15,6 +15,28 @@
                 {% csrf_token %}
                 {{form.search}}
                 <button class="ms-2 btn btn-primary" type="submit">Найти</button>
+                {% if nothing %}
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Информация о поиске</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Ничего не найдено</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            new bootstrap.Modal(document.getElementById('exampleModal')).show();
+                        };
+                    </script>
+                {% endif %}
             </form>
         </div>
     </header>
@@ -24,19 +46,50 @@
             <div class="employees border border-2 rounded p-3 mt-2">
                 <h2>Сотрудники</h2>
                 <div class="overflow-x-scroll text-white p-1" style="display: flex;">
-                    {% if not employees %}
+                    {% if not employees_and_forms %}
                     <div class="text-center">
                         <h3 class="text-dark-emphasis">Ничего не найдено</h3>
                     </div>
                     {% else %}
-                        {% for employee in employees %}
-                        <div class="bg-success col m-1 p-2" style="min-width: 275px; max-width: 275px;">
-                            <p><b>{{employee.username}}</b></p>
-                            {{employee.email}} <br>
-                            {{employee.work_phone}} <br>
-                            {{employee.position_id}} <br> <br>
-                            {{employee.birthday}}
-                        </div>
+                        {% for employee, form in employees_and_forms %}
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <div class="bg-success col m-1 p-2" style="min-width: 275px; max-width: 275px;">
+                                    <p><b>{{employee.username}}</b></p>
+                                    {{form.full_name}}
+                                    {{employee.email}} <br>
+                                    {{employee.work_phone}} <br>
+                                    {{employee.position_id}} <br> <br>
+                                    <div class="d-flex justify-content-between">
+                                        {{employee.birthday}}
+                                        <button class="btn btn-sm btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal" type="submit">сохранить</button>
+
+                                        {% if qr_vcard_path %}
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <img class="img-fluid" src="{{qr_vcard_path}}" alt="" srcset="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <script>
+                                                window.onload = function() {
+                                                    new bootstrap.Modal(document.getElementById('exampleModal')).show();
+                                                };
+                                            </script>
+
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </form>
                         {% endfor %}
                     {% endif %}
                 </div>
@@ -98,4 +151,7 @@
     </body>
 
 </body>
+
+    <script src="{% static 'node_modules/bootstrap/dist/js/bootstrap.js' %}"></script>
+
 </html>
